@@ -42,7 +42,8 @@ export default class Statistics extends Vue {
   }
 
   mounted() {
-    (this.$refs.chartWrapper as HTMLDivElement).scrollLeft = 99999;
+    const div = (this.$refs.chartWrapper as HTMLDivElement);
+    div.scrollLeft = div.scrollWidth;
   }
 
   beautify(string: string) {
@@ -101,14 +102,14 @@ export default class Statistics extends Vue {
         itemStyle: {
           color: '#47b7f5',
         },
-        symbol:'circle',
+        symbol: 'circle',
         symbolSize: 14
       }],
       tooltip: {
         show: true,
-        triggerOn:'click',
-        formatter:'{c}',
-        position:'top',
+        triggerOn: 'click',
+        formatter: '{c}',
+        position: 'top',
         backgroundColor: '#47b7f5',
       }
     };
