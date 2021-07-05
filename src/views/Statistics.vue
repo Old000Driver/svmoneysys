@@ -31,6 +31,8 @@ import clone from '@/lib/clone';
 import Tabs from '@/components/Tabs.vue';
 import recordTypeList from '@/constants/recordTypeList';
 import Chart from '@/components/Chart.vue';
+import day from 'dayjs';
+import _ from 'lodash';
 
 
 @Component({
@@ -61,8 +63,34 @@ export default class Statistics extends Vue {
       return day.format('YYYY 年 M 月 D 日');
     }
   }
-
+  get y(){
+    const today = new Date();
+    const array = [];
+    for (let i = 0; i <= 29; i++) {
+      const dateString = day(today).subtract(i, 'day').format('YYYY-MM-DD');
+      const found = _.find(this.recordList, {createdAt: dateString});
+      array.push({
+        date: dateString,
+        value: found ? found.amount : 0
+      });
+    }
+    array.sort((a, b) => {
+      if (a.date > b.date) {
+        return 1;
+      } else if (a.date === b.date) {
+        return 0;
+      } else {
+        return -1;
+      }
+    });
+    return array
+  }
   get x() {
+
+    const keys = this.y.map(item => item.date);
+    const values = this.y.map(item => item.value);
+    console.log(keys)
+    console.log(values)
     return {
       grid: {
         left: 0,
@@ -70,11 +98,7 @@ export default class Statistics extends Vue {
       },
       xAxis: {
         type: 'category',
-        data: [
-          '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
-          '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-          '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
-        ],
+        data: keys,
         axisTick: {
           alignWithLabel: true
         },
@@ -89,12 +113,7 @@ export default class Statistics extends Vue {
         show: false,
       },
       series: [{
-        data: [
-          820, 932, 901, 934, 1290, 1330, 1320,
-          820, 932, 901, 934, 1290, 1330, 1320,
-          820, 932, 901, 934, 1290, 1330, 1320,
-          820, 932, 901, 934, 1290, 1330, 1320, 1, 2
-        ],
+        data: values,
         type: 'line',
         lineStyle: {
           color: '#47b7f5'
@@ -126,7 +145,6 @@ export default class Statistics extends Vue {
     const newList = clone(recordList)
         .filter(r => r.type === this.types)
         .sort((a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf());
-    console.log(newList);
     if (newList.length == 0) {
       return [] as Result;
     }
