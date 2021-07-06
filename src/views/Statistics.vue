@@ -67,22 +67,14 @@ export default class Statistics extends Vue {
   get keyValueList() {
     const today = new Date();
     const array = [];
-    let count = 0;
     for (let i = 0; i <= 29; i++) {
       const dateString = day(today).subtract(i, 'day').format('YYYY-MM-DD');
-      let found = _.filter(this.recordList, {createdAt: dateString});
-      if (found) {
-        for (let y = 0; y < found.length; y++) {
-          count += found[y].amount;
-        }
-      }
+      const found = _.find(this.groupedList, {title: dateString});
 
       array.push({
         key: dateString,
-        value: found ? count : 0
+        value: found ? found.total : 0
       });
-      console.log(array);
-      count = 0;
     }
     array.sort((a, b) => {
       if (a.key > b.key) {
