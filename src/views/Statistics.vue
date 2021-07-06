@@ -63,16 +63,26 @@ export default class Statistics extends Vue {
       return day.format('YYYY 年 M 月 D 日');
     }
   }
-  get y(){
+
+  get y() {
     const today = new Date();
     const array = [];
+    let count = 0
     for (let i = 0; i <= 29; i++) {
       const dateString = day(today).subtract(i, 'day').format('YYYY-MM-DD');
-      const found = _.find(this.recordList, {createdAt: dateString});
+      let found = _.filter(this.recordList, {createdAt: dateString});
+      if (found){
+        for (let y = 0;y < found.length;y++){
+          count += found[y].amount
+        }
+      }
+
       array.push({
         date: dateString,
-        value: found ? found.amount : 0
+        value: found ? count : 0
       });
+      console.log(array)
+      count = 0
     }
     array.sort((a, b) => {
       if (a.date > b.date) {
@@ -83,14 +93,15 @@ export default class Statistics extends Vue {
         return -1;
       }
     });
-    return array
+    return array;
   }
+
   get x() {
 
     const keys = this.y.map(item => item.date);
     const values = this.y.map(item => item.value);
-    console.log(keys)
-    console.log(values)
+    // console.log(keys);
+    // console.log(values);
     return {
       grid: {
         left: 0,
@@ -107,6 +118,11 @@ export default class Statistics extends Vue {
             color: '#8c8c8c'
           },
         },
+        axisLabel: {
+          formatter: function (value: string) {
+            return value.substr(5);
+          }
+        }
       },
       yAxis: {
         type: 'value',
