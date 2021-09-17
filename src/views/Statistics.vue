@@ -93,9 +93,14 @@ export default class Statistics extends Vue {
     const keys = this.keyValueList.map(item => item.key);
     const values = this.keyValueList.map(item => item.value);
     return {
+      legend: {
+        data:['金额'],
+        left:'right',
+        top:20
+      },
       grid: {
         left: 0,
-        right: 0,
+        right:0,
       },
       xAxis: {
         type: 'category',
@@ -112,13 +117,26 @@ export default class Statistics extends Vue {
           formatter: function (value: string) {
             return value.substr(5);
           }
-        }
+        },
+
       },
       yAxis: {
         type: 'value',
-        show: false,
+        show: true,
+        position: 'right',
+        nameLocation:'end',
+        axisLabel: {
+          show:true,
+        },
+        axisTick: {
+          show:true
+        },
+        minorTick:{
+          show:false
+        },
       },
       series: [{
+        name:'金额',
         data: values,
         type: 'line',
         lineStyle: {
@@ -133,7 +151,7 @@ export default class Statistics extends Vue {
       tooltip: {
         show: true,
         triggerOn: 'click',
-        formatter: '{c}',
+        formatter: '￥{c}',
         position: 'top',
         backgroundColor: '#47b7f5',
       }
